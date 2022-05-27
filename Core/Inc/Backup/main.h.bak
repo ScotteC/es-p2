@@ -33,7 +33,6 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <math.h>
-#include "usart.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -128,8 +127,7 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-#define MEMS_INT1_Pin GPIO_PIN_0
-#define MEMS_INT1_GPIO_Port GPIOE
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

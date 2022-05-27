@@ -3,35 +3,20 @@
 #include "MEMS_sensor.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "stm32f4xx_it.h"
-
 
 extern TaskHandle_t task1_handle;
 
 
 void task1(void* parameters){
 
-//	int16_t mems_buffer[3];
-//	uint8_t uart[11] =
-//		{ 0x16, 0x02, 0x9, 0x0, 0x1, 0, 0, 0, 0, 0, 0};
-//
-//	init_mems();
-//
+	int16_t mems_buffer[3];
+
+	init_mems();
+
 	while (1){
-		HAL_Delay(100);
+
+		read_mems(mems_buffer);
 	}
-//
-//		read_mems(mems_buffer);
-//		uart[5] = (mems_buffer[0] >> 8) & 0xFF;
-//		uart[6] = (mems_buffer[0] >> 0) & 0xFF;
-//		uart[7] = (mems_buffer[1] >> 8) & 0xFF;
-//		uart[8] = (mems_buffer[1] >> 0) & 0xFF;
-//		uart[9] = (mems_buffer[2] >> 8) & 0xFF;
-//		uart[10] = (mems_buffer[2] >> 0) & 0xFF;
-//
-//		HAL_USART_Transmit(&husart2, uart, 11, 100);
-//		HAL_Delay(100);
-//	}
 }
 
 
