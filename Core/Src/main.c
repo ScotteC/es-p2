@@ -22,6 +22,7 @@
 #include "rng.h"
 #include "spi.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -106,7 +107,6 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM7_Init();
   MX_USART2_Init();
-
   /* USER CODE BEGIN 2 */
 	DWT_CTRL |= (1 << 0);
 
