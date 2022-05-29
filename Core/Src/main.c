@@ -26,6 +26,7 @@
 #include "task.h"
 #include "stdio.h"
 
+#include "tasks.h"
 #include "MEMS_sensor.h"
 /* USER CODE END Includes */
 
@@ -47,17 +48,17 @@
 
 /* USER CODE BEGIN PV */
 #define DWT_CTRL	(*(volatile uint32_t*) 0xE0001000)
-TaskHandle_t task1_Control_handle;
-TaskHandle_t task2_MEMS_handle;
-TaskHandle_t task3_LED_handle;
+//TaskHandle_t task1_Control_handle;
+//TaskHandle_t task2_MEMS_handle;
+//TaskHandle_t task3_LED_handle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void task_control(void* parameters);
-void task_mems(void* parameters);
-void task_led(void* parameters);
+//void task_control(void* parameters);
+//void task_mems(void* parameters);
+//void task_led(void* parameters);
 
 void ITM_print(const char* msg, const uint8_t len);
 
@@ -114,6 +115,8 @@ int main(void)
 	status = xTaskCreate(task_led,"LED",200, NULL, 3, &task3_LED_handle);
 
 	configASSERT(status==pdPASS);
+
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 	vTaskStartScheduler();
   /* USER CODE END 2 */
@@ -196,15 +199,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  task_timer_callback(htim);
   /* USER CODE END Callback 1 */
 }
 
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-//  if(GPIO_Pin == MEMS_INT1_Pin) {
-//	  xTaskNotifyFromISR( task_mems, 0, eNoAction, NULL, NULL);
-//  }
-//}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	task_ext_callback(GPIO_Pin);
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

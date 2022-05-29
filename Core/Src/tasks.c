@@ -5,9 +5,10 @@
 #include "task.h"
 #include "stm32f4xx_it.h"
 
-extern TaskHandle_t task1_Control_handle;
-extern TaskHandle_t task2_MEMS_handle;
-extern TaskHandle_t task3_LED_handle;
+
+TaskHandle_t task1_Control_handle;
+TaskHandle_t task2_MEMS_handle;
+TaskHandle_t task3_LED_handle;
 
 typedef enum {
 	init,
@@ -70,11 +71,9 @@ void task_control(void* parameters) {
 				xTaskNotify(task3_LED_handle, 0, eSetValueWithOverwrite);
 			    uint32_t rnd;
 				HAL_RNG_GenerateRandomNumber(&hrng, &rnd);
-				uint8_t rnd_dir = rnd % 4;
-				uint32_t rnd_time = rnd % 4000;
-				rnd_time += (rnd_time < 1000) ? 1000 : 0;
+				uint32_t rnd_time = (rnd % (4000 - 1000 + 1)) + 1000;
 
-				direction_set = (1 << rnd_dir);
+				direction_set = (1 << (rnd % 4));
 
 				try = 10000; // ToDo: use timer....
 
@@ -225,16 +224,29 @@ void task_led(void* parameters) {
  *  ax <-0.7 signals LEFT movement (green LED, LD4)
  */
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  if(GPIO_Pin == MEMS_INT1_Pin) {
-	  uint32_t n = (1 << 31);
-	  xTaskNotifyFromISR(task2_MEMS_handle, n, eSetBits, pdFALSE);
-  }
 
-//  else if (GPIO_Pin == B1_Pin) {
-//	  xTaskNotifyFromISR(task1_Control_handle, (1 << 31), eSetBits, pdFALSE);
-//  }
+void task_ext_callback(uint16_t GPIO_Pin) {
+	if(GPIO_Pin == MEMS_INT1_Pin) {
+		xTaskNotifyFromISR(task2_MEMS_handle,(0 | (1 << 31)), eSetBits, pdFALSE);
+	}
 }
+
+void task_timer_callback(TIM_HandleTypeDef *htim) {
+	if (htim->Instance == TIM6) {
+		xTaskNotifyFromISR(task1_Control_handle, (0 | (1 << 31)), eSetBits, pdFALSE);
+	}
+}
+
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+//  if(GPIO_Pin == MEMS_INT1_Pin) {
+//	  uint32_t n = (1 << 31);
+//	  xTaskNotifyFromISR(task2_MEMS_handle, n, eSetBits, pdFALSE);
+//  }
+//
+////  else if (GPIO_Pin == B1_Pin) {
+////	  xTaskNotifyFromISR(task1_Control_handle, (1 << 31), eSetBits, pdFALSE);
+////  }
+//}
 
 
 void ITM_print(const char* msg, const uint8_t len){
