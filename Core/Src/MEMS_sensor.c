@@ -1,9 +1,7 @@
 #include "MEMS_sensor.h"
 
 //write acceleration sensor
-void platform_write(uint8_t reg, const uint8_t *bufp,uint16_t len)
-{
-
+void platform_write(uint8_t reg, const uint8_t *bufp,uint16_t len) {
 	HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(&hspi1, &reg, 1, 1000);
 	HAL_SPI_Transmit(&hspi1, (uint8_t*) bufp, len, 1000);
@@ -12,9 +10,7 @@ void platform_write(uint8_t reg, const uint8_t *bufp,uint16_t len)
 }
 
 //read acceleration sensor
-void platform_read( uint8_t reg, uint8_t *bufp, uint16_t len)
-{
-
+void platform_read( uint8_t reg, uint8_t *bufp, uint16_t len) {
 	reg |= 0x80;
 
 	/* Read multiple command */
@@ -22,13 +18,10 @@ void platform_read( uint8_t reg, uint8_t *bufp, uint16_t len)
 	HAL_SPI_Transmit(&hspi1,&reg, 1, 1000);
 	HAL_SPI_Receive(&hspi1, bufp, len, 1000);
 	HAL_GPIO_WritePin(CS_I2C_SPI_GPIO_Port, CS_I2C_SPI_Pin, GPIO_PIN_SET);
-
 }
 
 
-void init_mems()
-{
-
+void init_mems() {
 	const uint8_t reg1=0x00; //X,Y,Z enable ODR=100 Hz update rate
 	const uint8_t reg2=0x00; //X,Y,Z enable ODR=100 Hz update rate
 	const uint8_t reg3=0xE8; //DRY active high on INIT1 pin

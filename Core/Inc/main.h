@@ -34,6 +34,11 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include <math.h>
 #include "usart.h"
+#include "rng.h"
+#include "spi.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
