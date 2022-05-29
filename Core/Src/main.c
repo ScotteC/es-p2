@@ -48,17 +48,11 @@
 
 /* USER CODE BEGIN PV */
 #define DWT_CTRL	(*(volatile uint32_t*) 0xE0001000)
-//TaskHandle_t task1_Control_handle;
-//TaskHandle_t task2_MEMS_handle;
-//TaskHandle_t task3_LED_handle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-//void task_control(void* parameters);
-//void task_mems(void* parameters);
-//void task_led(void* parameters);
 
 void ITM_print(const char* msg, const uint8_t len);
 
@@ -178,8 +172,9 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	task_ext_callback(GPIO_Pin);
+}
 /* USER CODE END 4 */
 
 /**
@@ -201,10 +196,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
   task_timer_callback(htim);
   /* USER CODE END Callback 1 */
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	task_ext_callback(GPIO_Pin);
 }
 
 /**

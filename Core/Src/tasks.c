@@ -237,18 +237,6 @@ void task_timer_callback(TIM_HandleTypeDef *htim) {
 	}
 }
 
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-//  if(GPIO_Pin == MEMS_INT1_Pin) {
-//	  uint32_t n = (1 << 31);
-//	  xTaskNotifyFromISR(task2_MEMS_handle, n, eSetBits, pdFALSE);
-//  }
-//
-////  else if (GPIO_Pin == B1_Pin) {
-////	  xTaskNotifyFromISR(task1_Control_handle, (1 << 31), eSetBits, pdFALSE);
-////  }
-//}
-
-
 void ITM_print(const char* msg, const uint8_t len){
 	for(int i = 0; i < len ; i++){
 		ITM_SendChar(msg[i]);
@@ -257,5 +245,3 @@ void ITM_print(const char* msg, const uint8_t len){
 		}
 	}
 }
-
-
