@@ -52,13 +52,18 @@
 
 /* USER CODE BEGIN PV */
 #define DWT_CTRL	(*(volatile uint32_t*) 0xE0001000)
-TaskHandle_t task1_handle;
+TaskHandle_t task1_Control_handle;
+TaskHandle_t task2_MEMS_handle;
+TaskHandle_t task3_LED_handle;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void task1(void* parameters);
+void task_control(void* parameters);
+void task_mems(void* parameters);
+void task_led(void* parameters);
+
 void ITM_print(const char* msg, const uint8_t len);
 
 extern void SEGGER_UART_init(unsigned long baud);
@@ -66,10 +71,6 @@ extern void SEGGER_UART_init(unsigned long baud);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-int16_t mems_buffer[3];
-uint8_t uart[11] =
-	{ 0x16, 0x02, 0x9, 0x0, 0x1, 0, 0, 0, 0, 0, 0};
 
 /* USER CODE END 0 */
 
@@ -113,9 +114,10 @@ int main(void)
 	SEGGER_SYSVIEW_Conf();
 	SEGGER_SYSVIEW_Start();
 
-	init_mems();
+	status = xTaskCreate(task_control,"Control",200, NULL, 3, &task1_Control_handle);
+	status = xTaskCreate(task_mems,"MEMS",200, NULL, 3, &task2_MEMS_handle);
+	status = xTaskCreate(task_led,"LED",200, NULL, 3, &task3_LED_handle);
 
-	status = xTaskCreate(task1,"Task1",200, NULL, 1, &task1_handle);
 	configASSERT(status==pdPASS);
 
 	vTaskStartScheduler();
@@ -203,20 +205,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE END Callback 1 */
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if(GPIO_Pin == MEMS_INT1_Pin) {
-	read_mems(mems_buffer);
-	uart[5]  = (mems_buffer[0] >> 8) & 0xFF;
-	uart[6]  = (mems_buffer[0] >> 0) & 0xFF;
-	uart[7]  = (mems_buffer[1] >> 8) & 0xFF;
-	uart[8]  = (mems_buffer[1] >> 0) & 0xFF;
-	uart[9]  = (mems_buffer[2] >> 8) & 0xFF;
-	uart[10] = (mems_buffer[2] >> 0) & 0xFF;
-
-	HAL_USART_Transmit(&husart2, uart, 11, 100);
-  }
-}
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+//  if(GPIO_Pin == MEMS_INT1_Pin) {
+//	  xTaskNotifyFromISR( task_mems, 0, eNoAction, NULL, NULL);
+//  }
+//}
 
 /**
   * @brief  This function is executed in case of error occurrence.
